@@ -26,6 +26,9 @@ jobs:
           echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
 
+      - name: Create .env file
+        run: echo "DB_USER=${{ secrets.DB_USER }}" > .env && echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
       - name: Build and Push Docker Image
         run: |
           docker-compose build
