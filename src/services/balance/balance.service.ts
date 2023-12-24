@@ -1,5 +1,3 @@
-// balance.service.ts
-
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -19,6 +17,20 @@ export class BalanceService {
 
     this.balances.set(userId, this.balances.get(userId) + amount);
 
+    return { success: true };
+  }
+
+  async deductBalance(
+    userId: string,
+    amount: number,
+  ): Promise<{ success: boolean }> {
+    const balance = this.balances.get(userId);
+
+    if (amount > balance) {
+      return { success: false }; // 잔액 부족
+    }
+
+    this.balances.set(userId, balance - amount);
     return { success: true };
   }
 
