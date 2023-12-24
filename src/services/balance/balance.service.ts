@@ -10,8 +10,11 @@ export class BalanceService {
     userId: string,
     amount: number,
   ): Promise<{ success: boolean }> {
+    if (!userId) return { success: false };
+    if (amount <= 0) return { success: false };
+
     if (!this.balances.has(userId)) {
-      this.balances.set(userId, 0);
+      this.balances.set(userId, amount);
     }
 
     this.balances.set(userId, this.balances.get(userId) + amount);
@@ -20,6 +23,8 @@ export class BalanceService {
   }
 
   async getBalance(userId: string): Promise<number> {
-    return this.balances.get(userId) || 0;
+    const balance = this.balances.get(userId);
+    if (balance >= 0) return balance;
+    return 0;
   }
 }
