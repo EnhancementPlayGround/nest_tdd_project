@@ -95,4 +95,15 @@ describe('BalanceService', () => {
       expect(result).toBe(0);
     });
   });
+
+  describe('deductAmount failure cases', () => {
+    it('should return failure for insufficient balance', async () => {
+      const userId = 'user3';
+      const amount = 99999999;
+
+      const result = await service.deductBalance(userId, amount);
+
+      expect(result.success).toBe(false);
+    });
+  });
 });

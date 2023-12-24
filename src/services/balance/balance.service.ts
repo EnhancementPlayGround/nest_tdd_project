@@ -22,6 +22,17 @@ export class BalanceService {
     return { success: true };
   }
 
+  async deductBalance(userId: string, amount: number): Promise<boolean> {
+    const balance = this.balances.get(userId);
+
+    if (amount > balance) {
+      return false; // 잔액 부족
+    }
+
+    this.balances.set(userId, balance - amount);
+    return true;
+  }
+
   async getBalance(userId: string): Promise<number> {
     const balance = this.balances.get(userId);
     if (balance >= 0) return balance;
