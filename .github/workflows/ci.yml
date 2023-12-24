@@ -29,6 +29,12 @@ jobs:
       - name: Create .env file
         run: echo "DB_USER=${{ secrets.DB_USER }}" > .env && echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
 
+      - name: Copy environment-specific configuration file
+        run: |
+          if [ "$NODE_ENV" = "dev" ]; then
+            cp .env .env.dev
+          fi
+
       - name: Build and Push Docker Image
         run: |
           docker-compose build
