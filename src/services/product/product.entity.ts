@@ -15,4 +15,7 @@ export class Product {
 
   @Column()
   quantity: number;
+
+  @Column() // Assuming 'inventory' is a property you want to add
+  inventory: number;
 }

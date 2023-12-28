@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { BalanceService } from '../balance/balance.service';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
@@ -56,11 +56,6 @@ export class OrderService {
       },
     );
     return result;
-  }
-
-  sendOrderToDataPlatform(orderId: number): void {
-    // Mock implementation of sending order information to data platform
-    console.log('Sending order information to data platform:', orderId);
   }
 
   private async deductAmountFromBalance(
@@ -127,12 +122,14 @@ export class OrderService {
     return totalAmount;
   }
 
-  private createOrderInfo(
-    userId: string,
-    items: { productId: number; quantity: number }[],
-    totalAmount: number,
-  ): any {
-    // Implementation of creating order information object
-    return { userId, items, totalAmount };
+  async sendOrderDataToPlatform(orderId: number): Promise<void> {
+    if (Math.random() < 0.01) {
+      throw new InternalServerErrorException({
+        message: 'Failed to send order to data platform.',
+        errorMessage:
+          "Something went wrong and we couldn't complete your request.",
+      });
+    }
+    console.log(`Order data sent to platform for orderId: ${orderId}`);
   }
 }
