@@ -7,6 +7,7 @@ import { User } from '../user/user.entity';
 import { Product } from '../product/product.entity';
 import { Order } from './order.entity';
 import { ProductService } from '../product/product.service';
+import { InventoryManager } from '../product/interfaces/inventory-manager.interface';
 
 @Injectable()
 export class OrderService {
@@ -17,9 +18,9 @@ export class OrderService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
     private readonly balanceService: BalanceService,
     private readonly productService: ProductService,
+    private inventoryManager: InventoryManager,
   ) {}
 
   async getBalance(userId: string): Promise<number> {
@@ -37,7 +38,7 @@ export class OrderService {
 
         for (const product of products) {
           const { productId, quantity } = product;
-          await this.deductInventory(
+          await this.inventoryManager.deductInventory(
             transactionalEntityManager,
             productId,
             quantity,
@@ -65,38 +66,6 @@ export class OrderService {
   ): Promise<void> {
     await entityManager.update(User, userId, {
       balance: () => `balance - ${amount}`,
-    });
-  }
-
-  private async deductInventory(
-    entityManager: EntityManager,
-    productId: number,
-    quantity: number,
-  ): Promise<void> {
-    // Retrieve the product from the database
-    const product = await entityManager.findOne(Product, {
-      where: { id: productId },
-    });
-
-    if (!product) {
-      throw new Error(`Product with ID ${productId} not found`);
-    }
-
-    // Check if there's enough inventory
-    if (product.inventory < quantity) {
-      throw new Error(`Not enough inventory for product ${productId}`);
-    }
-
-    // Deduct the inventory
-    product.inventory -= quantity;
-
-    // Save the updated product to the database
-    await entityManager.save(Product, product);
-
-    // 여기에서 상품의 재고를 차감하는 로직을 추가
-    // transactionalEntityManager를 사용하여 트랜잭션 내에서 데이터베이스 조작을 수행
-    await entityManager.update(Product, productId, {
-      inventory: () => `inventory - ${quantity}`,
     });
   }
 

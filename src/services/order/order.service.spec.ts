@@ -59,6 +59,7 @@ describe('OrderService', () => {
         name: 'Product 1',
         price: 50,
         quantity: 10,
+        inventory: 5,
       });
 
       jest
@@ -71,13 +72,11 @@ describe('OrderService', () => {
 
           return result;
         });
-
       // Assuming you have a method to create a mock order
       const mockOrder = {
         id: 1,
         userId: 1,
-        items: [{ productId: 1, quantity: 2 }],
-        totalAmount: 100,
+        products: [{ productId: 1, quantity: 2 }],
       };
 
       // Call the createOrder method
@@ -134,5 +133,5 @@ describe('OrderService', () => {
         orderService.sendOrderDataToPlatform(1),
       ).rejects.toThrowError(InternalServerErrorException);
     });
-  })
+  });
 });
