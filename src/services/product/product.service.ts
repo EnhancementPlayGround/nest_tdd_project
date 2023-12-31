@@ -1,14 +1,13 @@
-// src/product/product.service.ts
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { Product } from './product.entity';
 import { ProductDto } from './dto/product.dto';
 import { OrderDetail } from '../order/order-detail.entity';
+import { InventoryManager } from './interfaces/inventory-manager.interface';
 
 @Injectable()
-export class ProductService {
+export class ProductService implements InventoryManager {
   constructor(
     @InjectRepository(OrderDetail)
     private orderDetailRepository: Repository<OrderDetail>,
@@ -51,5 +50,33 @@ export class ProductService {
     return this.productRepository.findBy({
       id: In(topProducts.map((p) => p.productId)),
     });
+  }
+  async deductInventory(
+    entityManager: EntityManager,
+    productId: number,
+    quantity: number,
+  ): Promise<void> {
+    // Retrieve the product from the database
+    const product = await entityManager.findOne(Product, {
+      where: { id: productId },
+      lock: {
+        mode: 'pessimistic_write',
+      },
+    });
+
+    if (!product) {
+      throw new Error(`Product with ID ${productId} not found`);
+    }
+
+    // Check if there's enough inventory
+    if (product.inventory < quantity) {
+      throw new Error(`Not enough inventory for product ${productId}`);
+    }
+
+    // Deduct the inventory
+    product.inventory -= quantity;
+
+    // Save the updated product to the database
+    await entityManager.save(Product, product);
   }
 }
