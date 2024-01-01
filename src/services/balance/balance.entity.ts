@@ -2,7 +2,7 @@
 
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UserBalance {
+export class Balance {
   @IsString()
   @IsNotEmpty()
   userId: string;
