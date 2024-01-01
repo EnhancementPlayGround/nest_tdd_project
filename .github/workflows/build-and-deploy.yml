@@ -27,13 +27,13 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Create .env file
-        run: echo "DB_USER=${{ secrets.DB_USER }}" > .env && echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-
-      - name: Copy environment-specific configuration file
         run: |
-          if [ "$NODE_ENV" = "dev" ]; then
-            cp .env .env.dev
-          fi
+          echo "DB_HOST=db" > .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "NODE_ENV=dev" >> .env
+          # 추가할 환경 변수들을 여기에 넣으세요
 
       - name: Build and Push Docker Image
         run: |
