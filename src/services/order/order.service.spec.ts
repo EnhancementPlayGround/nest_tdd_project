@@ -14,9 +14,6 @@ describe('OrderService', () => {
   let entityManager: EntityManager;
   let balanceService: BalanceService;
   let productService: ProductService;
-  let userRepository: Repository<User>;
-  let productRepository: Repository<Product>;
-  let orderRepository: Repository<Order>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -125,7 +122,8 @@ describe('OrderService', () => {
       jest.spyOn(orderService, 'sendOrderDataToPlatform').mockRejectedValueOnce(
         new InternalServerErrorException({
           message: 'Failed to send order to data platform.',
-          errorMessage: "Something went wrong and we couldn't complete your request.",
+          errorMessage:
+            "Something went wrong and we couldn't complete your request.",
         }),
       );
 
