@@ -21,7 +21,7 @@ ARG NODE_ENV=dev
 ENV NODE_ENV=${NODE_ENV}
 
 # Copy the environment-specific configuration file
-COPY .env.${NODE_ENV} .env
+COPY .env .env
 
 # Command to run your Nest.js application
 CMD ["npm", "run", "start:docker"]
